@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SentinelX Cyber Threat Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #0b1220;
+            color: white;
+        }
+
+        header {
+            background: #111827;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            color: #38bdf8;
+            font-weight: bold;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(56,189,248,0.2);
+        }
+
+        .status {
+            font-size: 26px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .safe { color: #22c55e; }
+        .danger { color: #ef4444; }
+
+        .attack-name {
+            font-size: 34px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .counter {
+            font-size: 40px;
+            color: #38bdf8;
+            margin-top: 10px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        li {
+            background: #0f172a;
+            margin-bottom: 8px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+🛡️ Team SentinelX — Real-Time Cyber Threat Detection Dashboard
+</header>
+
+<div class="container">
+
+    <!-- LEFT PANEL -->
+    <div class="card">
+        <h2>Live Threat Feed</h2>
+        <ul id="feed"></ul>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div>
+        <div class="card">
+            <h2>Current Prediction</h2>
+            <div class="attack-name" id="prediction">Loading...</div>
+            <div class="status" id="status"></div>
+        </div>
+
+        <div class="card" style="margin-top:20px;">
+            <h2>Detected Threats</h2>
+            <div class="counter" id="count">0</div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+let threatCount = 0;
+
+async function getPrediction() {
+    const res = await fetch("http://127.0.0.1:8000/predict");
+    const data = await res.json();
+
+    let pred = data.prediction;
+
+    const predictionBox = document.getElementById("prediction");
+    const statusBox = document.getElementById("status");
+    const feed = document.getElementById("feed");
+
+    predictionBox.innerText = pred;
+
+    if (pred === "BENIGN") {
+        predictionBox.className = "attack-name safe";
+        statusBox.innerText = "🟢 NETWORK STATUS: SAFE";
+    } else {
+        predictionBox.className = "attack-name danger";
+        statusBox.innerText = "🔴 THREAT DETECTED";
+
+        threatCount++;
+        document.getElementById("count").innerText = threatCount;
+    }
+
+    // Add to live feed
+    let item = document.createElement("li");
+    item.innerText = new Date().toLocaleTimeString() + " — " + pred;
+    feed.prepend(item);
+
+    // Limit feed size
+    if (feed.children.length > 25) {
+        feed.removeChild(feed.lastChild);
+    }
+}
+
+setInterval(getPrediction, 2000);
+getPrediction();
+</script>
+
+</body>
+</html>
