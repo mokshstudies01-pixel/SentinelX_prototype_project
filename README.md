@@ -3,7 +3,15 @@
 This project uses AI to detect cyber threats from network traffic data
 and display predictions in a live dashboard.
 Pipeline: Dataset -> Preprocessing -> AI Model -> FastAPI Backend -> Dashboard
-The current prototype acts as an AI-based Intrusion Detection System (IDS).
+The current prototype acts as an AI-based Intrusion Detection System (IDS). 
+
+# Model Performance
+SentinelX currently uses a supervised machine learning model trained on the CICIDS2017 intrusion‑detection dataset.
+The data is split into training, validation, and test sets to evaluate real‑world performance.
+Dataset: CICIDS2017
+  Training	   80%
+  Validation	 0% (not separately used in prototype)
+  Test	       20%
 
 <img width="459" height="666" alt="Architecture Diagram" src="https://github.com/user-attachments/assets/e29036a3-3403-483c-a787-3694cd0fc679" />
 
@@ -42,6 +50,29 @@ in browser
 
 The dashboard will automatically call the API and show live predictions.
 
+# Overall Metrics (Test Set)
+
+Overall Accuracy ≈ 100.0%
+Precision (attack class avg): ~80.8%
+Recall (attack class avg): ~75.2%
+F1-score (attack class avg): ~77.2%
+These metrics show how reliably SentinelX distinguishes between benign and malicious traffic on unseen data.
+
+| Attack Class            | Precision | Recall | F1-Score |
+| ----------------------- | --------- | ------ | -------- |
+| Bot                     | 93.0%     | 70.0%  | 80.0%    |
+| Dos Slowhttptest        | 99.0%     | 99.0%  | 99.0%    |
+| Web Attack|Brute force  | 74.0%     | 82.0%  | 78.0%    |
+| Web Attack|XSS          | 39.0%     | 25.0%  | 30.0%    |
+
+## Inference & Performance
+Even at prototype stage, SentinelX is designed with real‑time detection and high‑throughput environments in mind.
+| Metric                                     | Measured Value                |
+| ------------------------------------------ | ----------------------------- |
+| Average inference latency (single request) |   68.54 ms                    |
+| Throughput (batched requests on test log)  |   16,710.37 requests/second   |
+| Typical dashboard update interval          |   2 seconds                   |
+
 
 Folder arrangement -
 <img width="800" height="336" alt="Screenshot 2026-02-15 205053" src="https://github.com/user-attachments/assets/b86a8e8e-1b2b-4736-baeb-190114252eaa" />
@@ -58,6 +89,8 @@ Opening dashboard (./frontend/index.html)
 
 Now to close API running, press Ctrl + C in the terminal.
 
+
+The current prototype demonstrates real-time AI-based threat detection running on CPU, achieving low inference latency and high throughput suitable for live monitoring dashboards. The architecture is designed for future AMD GPU acceleration to further reduce latency and improve scalability for enterprise-level traffic volumes.
 # Planned future updates To evolve this prototype into a production-level solution, the following enhancements are planned:
 
 1.  Automated Response System
